@@ -381,3 +381,37 @@ app.listen(3000, () => console.log("Server running on port 3000"));
 <br>
 thats it for chapter 2
 ```
+
+<br>
+
+# **Chapter 3:-** _Securing the API_
+
+because this book uses a progressive approach for explaining how api security works, some of the chapter's content is not realstic in realworld senarios but the chapter rather focuses on concepts rather than implementations
+
+**the chapter talks about**
+
+- the layers of security
+
+rate limiting => authentication => auditng => authorization
+
+the Idea behind authentication is that there is a content that differs from an authenticated user from unauthenticated user, regardles if the content is public or not
+
+for example, public facebook posts aren't available for unauthenticated users, regardles who the authenticated users are, the content is available for facebook authenticated users, not visitors or bots
+
+also it talks about encryption and hashing
+
+## Authorisation
+
+### ACLs
+
+an ACL is identity based access controle list, it checks if the entity that wants to access a resources is accually listed in the ACL of that resource
+
+<br>
+
+thats it for chapter 3
+
+<br>
+
+# **Chapter 4:-** _Session cookie authentication_
+
+this chapter covers, http cookies, token based auth, CSRF protection
