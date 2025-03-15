@@ -720,3 +720,152 @@ a high level view of the flow
 <br>
 
 thats it for this chapter
+
+# **Chapter 5:-** _Modern token-based authentication_
+
+this chapter talks abour CORS and some cool browser's features
+
+Here’s the explanation in Markdown format:
+
+## Preflight Request in CORS
+
+A **preflight request** is an **HTTP OPTIONS** request sent by the browser **before** making an actual cross-origin request. It checks whether the server allows the actual request based on the HTTP method and headers.
+
+### Why Is a Preflight Request Needed?
+
+A preflight request occurs when:
+
+- The request uses HTTP methods other than **GET**, **HEAD**, or **POST**.
+- The request includes custom headers (e.g., `Authorization`, `X-Requested-With`).
+- The request’s `Content-Type` is something other than:
+  - `application/x-www-form-urlencoded`
+  - `multipart/form-data`
+  - `text/plain`
+
+### How a Preflight Request Works
+
+1. The browser sends an **OPTIONS** request to the server with:
+
+   - `Access-Control-Request-Method`: The actual HTTP method intended for the request.
+   - `Access-Control-Request-Headers`: Any custom headers the actual request will use.
+   - `Origin`: The domain of the request's origin.
+
+2. The server responds with allowed methods, headers, and origins using CORS headers:
+
+   - `Access-Control-Allow-Origin`: Allowed origins.
+   - `Access-Control-Allow-Methods`: Allowed HTTP methods.
+   - `Access-Control-Allow-Headers`: Allowed request headers.
+
+3. If the preflight request succeeds, the browser proceeds with the actual request.
+
+### Example
+
+#### **Preflight Request (Sent by Browser)**
+
+```http
+OPTIONS /api/data HTTP/1.1
+Host: api.example.com
+Origin: https://myapp.com
+Access-Control-Request-Method: POST
+Access-Control-Request-Headers: Content-Type, Authorization
+```
+
+#### **Preflight Response (From Server)**
+
+```http
+HTTP/1.1 204 No Content
+Access-Control-Allow-Origin: https://myapp.com
+Access-Control-Allow-Methods: GET, POST, PUT
+Access-Control-Allow-Headers: Content-Type, Authorization
+Access-Control-Max-Age: 86400
+```
+
+The `Access-Control-Max-Age` header tells the browser how long it can cache this preflight response.
+
+![alt text](image-7.png)
+
+![alt text](image-8.png)
+
+![alt text](image-9.png)
+
+### CORS Headers Table
+
+| Header                               | Description                                                                         | Example Value                             |
+| ------------------------------------ | ----------------------------------------------------------------------------------- | ----------------------------------------- |
+| **Access-Control-Allow-Origin**      | Specifies which origins are allowed to access the resource.                         | `*` (any origin) or `https://example.com` |
+| **Access-Control-Allow-Methods**     | Lists the HTTP methods allowed when accessing the resource.                         | `GET, POST, PUT, DELETE`                  |
+| **Access-Control-Allow-Headers**     | Specifies which headers can be used in the actual request.                          | `Content-Type, Authorization`             |
+| **Access-Control-Allow-Credentials** | Indicates whether cookies and credentials can be included in cross-origin requests. | `true` or `false`                         |
+| **Access-Control-Expose-Headers**    | Specifies which headers the browser can access from the response.                   | `X-Custom-Header, Authorization`          |
+| **Access-Control-Max-Age**           | Defines how long (in seconds) the preflight response can be cached.                 | `86400` (1 day)                           |
+| **Access-Control-Request-Method**    | Sent by the browser in a preflight request to indicate the desired HTTP method.     | `POST`                                    |
+| **Access-Control-Request-Headers**   | Sent by the browser in a preflight request to list the headers it wants to send.    | `Content-Type, Authorization`             |
+| **Origin**                           | Indicates the origin of the request. Sent by the browser.                           | `https://myapp.com`                       |
+
+#### Configureing CORS in Express.js app
+
+```ts
+import express from "express";
+import cors from "cors";
+
+const app = express();
+
+// Allow requests from your SPA domain
+const corsOptions = {
+  origin: "https://your-spa-domain.com", // Replace with your actual frontend domain
+  methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
+  allowedHeaders: ["Content-Type", "Authorization"], // Allowed request headers
+  credentials: true, // Allow cookies and authentication headers
+};
+
+app.use(cors(corsOptions));
+
+// Example route
+app.get("/api/data", (req, res) => {
+  res.json({ message: "CORS is working!" });
+});
+
+// Start server
+app.listen(5000, () => {
+  console.log("Server running on port 5000");
+});
+```
+
+to set multiple origins
+
+```ts
+const corsOptions = {
+  origin: (origin, callback) => {
+    const allowedOrigins = ["https://spa-dev.com", "https://spa-prod.com"];
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+};
+```
+
+> SameSite cookies, described in chapter 4, are fundamentally incompatible with CORS.
+> If a cookie is marked as SameSite, then it will not be sent on cross-site requests
+> regardless of any CORS policy and the Access-Control-Allow-Credentials header is
+> ignored. An exception is made for origins that are sub-domains of the same site; for
+> example, www.example.com can still send requests to api.example.com, but genuine
+> cross-site requests to different registerable domains are disallowed. If you need to
+> allow cross-site requests with cookies, then you should not use SameSite cookies.
+> A complication came in October 2019, when Google announced that its Chrome web
+> browser would start marking all cookies as SameSite=lax by default with the release
+> of Chrome 80 in February 2020. (At the time of writing the rollout of this change has
+> been temporarily paused due to the COVID-19 coronavirus pandemic.) If you wish to
+> use cross-site cookies you must now explicitly opt-out of SameSite protections by
+> adding the SameSite=none and Secure attributes to those cookies, but this can
+> cause problems in some web browsers (see https://www.chromium.org/updates/
+> same-site/incompatible-clients). Google, Apple, and Mozilla are all becoming more
+> aggressive in blocking cross-site cookies to prevent tracking and other security or privacy issues. It’s clear that the future of cookies will be restricted to HTTP requests
+> within the same site and that alternative approaches, such as those discussed in the
+> rest of this chapter, must be used for all other cases.
+
+## the rest
+
+**the rest of this chapter disusses the implementation of the "statefull" tokens storage on the server and talks about the possibility of storing the tokens in the BOM instead of the Dom which reduse CSRF risk but actually increase the risk of XSS, Maybe an extra work would be a combination of these mechanisms (by having anti-CSRF token that actes on client-side level)**
