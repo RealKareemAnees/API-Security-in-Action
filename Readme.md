@@ -10,6 +10,18 @@ lets digg in
 
 lots of talk
 
+anyways, I suggest imlementing the [owasp top 10](https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html) on every API
+
+also watching this lecture about HTTP cookie by Hussein Nasser on [youtube](https://www.youtube.com/watch?v=sovAIX4doOE&pp=ygUjZG91YmxlIHN1Ym1pdCBjb29raWUgY3NyZiBleHBsYWluZWQ%3D)
+
+also reading about HTTP [from MDN web docs](https://developer.mozilla.org/en-US/docs/Web/HTTP)
+
+also rereading this Readme progressively
+
+also implemeinting this security model
+
+![alt text](image-3.png)
+
 # **Chapter 2:-** _Secure API Development_
 
 this chapter introduces most basic and common non-identity attacks, things like XXS, Injections, etecetra...
@@ -415,3 +427,296 @@ thats it for chapter 3
 # **Chapter 4:-** _Session cookie authentication_
 
 this chapter covers, http cookies, token based auth, CSRF protection
+
+**Token based aouthentication**: instead of asking the user to type credentials manually, why not to give them something for a duration that tell "hey there im user123"
+
+the whole next 3 chapters only talk about this
+
+## Session cookies
+
+as it's name suggests, it is a session cookie, it is meant to be used for the session, once the session ends, the cookie die
+
+> like when trying to delete github repo for the rist time and later at the same moment, the first time requires a login, then no login is required untill the browser is closed
+
+> the concept of session is not always cookie session, it could be in the BOM or binded with the IP or just dynamic, but cookies offer a combination of thome benifets
+
+this is how it works
+
+![alt text](image.png)
+
+### creating session cookies
+
+also the author states that the token is stored on the sserver so the server checks it, and the expiry date is put in the session
+
+the following code violates this, it just sends a cookie and authenticated with it
+
+```ts
+//@ts-nocheck
+
+const users = [{ id: 1, username: "admin", password: "password123" }];
+import express, {
+  Request as ExpressRequest,
+  Response,
+  RequestHandler,
+} from "express";
+import session from "express-session";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import dotenv from "dotenv";
+import path from "path";
+
+dotenv.config();
+const app = express();
+
+app.use(express.json());
+app.use(cookieParser());
+app.use(
+  cors({
+    origin: "http://localhost:3000", // React frontend URL
+    credentials: true, // Allows sending cookies
+  })
+);
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "supersecret", // Use env variables in production
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true, // Prevents XSS attacks
+      secure: false, // Set to `true` in production with HTTPS
+      sameSite: "lax", // Helps prevent CSRF
+    },
+  })
+);
+
+import { Session } from "express-session";
+
+app.post("/api/login", (req: Request, res: Response) => {
+  const { username, password } = req.body;
+  const user = users.find(
+    (u) => u.username === username && u.password === password
+  );
+  if (!user) return res.status(401).json({ message: "Invalid credentials" });
+
+  req.session.user = { id: user.id, username: user.username };
+
+  res.json({ message: "Login successful" });
+});
+
+app.post("/api/logout", (req, res) => {
+  req.session.destroy(() => {
+    res.clearCookie("connect.sid");
+    res.json({ message: "Logged out" });
+  });
+});
+
+app.use(express.static(path.join(__dirname, "..", "..", "/frontend", "/dist"))); // For Vite
+app.get("/", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "..", "..", "/frontend", "/dist", "index.html")
+  ); // For Vite
+});
+
+//@ts-ignore
+app.get("/api/profile", (req, res) => {
+  //@ts-ignore
+
+  if (!req.session.user)
+    return res.status(401).json({ message: "Unauthorized" });
+  //@ts-ignore
+
+  res.json({ user: req.session.user });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running at http://localhost:${PORT}`);
+});
+```
+
+the fontend
+
+```ts
+//@ts-nocheck
+
+import { useState, useEffect } from "react";
+import axios from "axios";
+
+const API = axios.create({
+  baseURL: "http://localhost:3000/api",
+  withCredentials: true, // Allow session cookies
+});
+
+export default function App() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [user, setUser] = useState<{ username: string } | null>(null);
+
+  // Fetch profile on load
+  useEffect(() => {
+    API.get("/profile")
+      .then((res) => setUser(res.data.user))
+      .catch(() => setUser(null));
+  }, []);
+
+  // Handle login
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await API.post("/login", { username, password });
+      const res = await API.get("/profile"); // Fetch user after login
+      setUser(res.data.user);
+    } catch (error) {
+      alert("Login failed");
+    }
+  };
+
+  return (
+    <div style={{ textAlign: "center", marginTop: "50px" }}>
+      {!user ? (
+        <form onSubmit={handleLogin}>
+          <h2>Login</h2>
+          <input
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button type="submit">Login</button>
+        </form>
+      ) : (
+        <h2>Welcome, {user.username}!</h2>
+      )}
+    </div>
+  );
+}
+```
+
+the code is messy and chat-gpt generated but it works, if you want to try it run
+
+```sh
+cd backend
+
+npm i express express-session cors cookie-parser dotenv
+```
+
+```sh
+cd frontend
+
+npm create vite@latest my-app --template react-ts
+
+npm install axios react-router-dom
+
+```
+
+thats it for creating the session cookies
+
+### session fixation attacks
+
+so, I have a cookie, someone can steal it and pretend to be me, what to do?
+
+this is how it is done
+
+![alt text](image-1.png)
+
+so a session fixation attack occurs when an API fails to generate a new
+session token after a user has authenticated. The attacker captures a session
+token from loading the site on their own device and then injects that token
+
+#### how to protect againest session fixation attacks
+
+when it comes to browsers features, it is on the browser, so browsers invinted attributes
+
+| Attribute             | Description                                                    | Purpose                                  |
+| --------------------- | -------------------------------------------------------------- | ---------------------------------------- |
+| **Secure**            | Sends the cookie only over HTTPS.                              | Prevents exposure over unencrypted HTTP. |
+| **HttpOnly**          | Restricts access to the cookie from JavaScript.                | Mitigates XSS attacks.                   |
+| **SameSite**          | Controls cross-site cookie behavior (`Strict`, `Lax`, `None`). | Helps prevent CSRF attacks.              |
+| **Domain**            | Specifies the domain for which the cookie is valid.            | Limits scope of the cookie.              |
+| **Path**              | Restricts the cookie to a specific path.                       | Defines where the cookie is accessible.  |
+| **Expires / Max-Age** | Sets the cookie expiration time.                               | Controls how long the cookie persists.   |
+| **Partitioned**       | Ensures cookie isolation across sites.                         | Prevents cross-site tracking.            |
+
+### Persistent cookies VS Session cookies
+
+the previous code example is not really a session cookie, because the browser did not get rid of the cookie when the window is closed
+
+here is the book definetion for _Persistent cookies VS Session cookies_:
+
+> A cookie with an explicit Expires or Max-Age attribute is known as a persistent cookie
+> and will be permanently stored by the browser until the expiry time is reached, even
+> if the browser is restarted. Cookies without these attributes are known as session
+> cookies (even if they have nothing to do with a session token) and are deleted when
+> the browser window or tab is closed. You should avoid adding the Max-Age or Expires
+> attributes to your authentication session cookies so that the user is effectively
+> logged out when they close their browser tab. This is particularly important on shared
+> devices, such as public terminals or tablets that might be used by many different people. Some browsers will now restore tabs and session cookies when the browser is
+> restarted though, so you should always enforce a maximum session time on the
+> server rather than relying on the browser to delete cookies appropriately. You should
+> also consider implementing a maximum idle time, so that the cookie becomes invalid
+> if it has not been used for three minutes or so. Many session cookie frameworks
+> implement these checks for you.
+> Persistent cookies can be useful during the login process as a “Remember Me”
+> option to avoid the user having to type in their username manually, or even to automatically log the user in for low-risk operations. This should only be done if trust in
+> the device and the user can be established by other means, such as looking at the
+> location, time of day, and other attributes that are typical for that user. If anything
+> looks out of the ordinary, then a full authentication process should be triggered. Selfcontained tokens such as JSON Web Tokens (see chapter 6) can be useful for implementing persistent cookies without storing long-lived state on the server.
+
+## CSRF
+
+**Cross-site request forgery (CSRF, pronounced “sea-surf”) occurs
+when an attacker makes a cross-origin request to your API and the browser
+sends cookies along with the request. The request is processed as if it was genuine unless extra checks are made to prevent these requests.**
+
+![alt text](image-2.png)
+
+> TIP An important part of protecting your API from CSRF attacks is to ensure
+> that you never perform actions that alter state on the server or have other
+> real-world effects in response to GET requests. GET requests are almost
+> always allowed by browsers and most CSRF defenses assume that they are safe.
+
+### protection againest CSRF
+
+#### using **SameSite**
+
+A SameSite cookie will only be sent on requests that originate
+from the same domain that originally set the cookie. Only the registerable
+domain is examined, so api.payments.example.com and www .example.com
+are considered the same site, as they both have the registerable domain of
+example.com. On the other hand, www .example.org (different suffix) and
+www .different.com are considered different sites. Unlike an origin, the protocol and port are not considered when making same-site decisions.
+
+![alt text](image-4.png)
+
+To mark a cookie as SameSite, you can add either `SameSite=lax` or `SameSite=strict` on
+the Set-Cookie header
+
+> Recent versions of Chrome have started marking cookies as SameSite=lax by default.1
+> Other major browsers have announced intentions to
+> follow suit. You can opt out of this behavior by explicitly adding a new SameSite=none attribute to your cookies, but only if they are also Secure. Unfortunately, this new attribute is not compatible with all browsers.
+
+#### using **Double Submitt Cookie**
+
+So instead of the server managing everything and rely on the browser blindly, lets make the frontend do somework
+
+the server will send a CSRF toke, the frontend should resend it but not automatically like cookies
+
+to clear confusion, read this post on [stackoverflow](https://stackoverflow.com/questions/65854195/csrf-double-submit-cookie-is-basically-not-secure) on how this actuallly work
+
+a high level view of the flow
+
+![alt text](image-5.png)
+
+![alt text](image-6.png)
+
+**This amazing [youtube video](https://www.youtube.com/watch?v=80S8h5hEwTY) explaines how to implement this**
+
+<br>
+
+thats it for this chapter
