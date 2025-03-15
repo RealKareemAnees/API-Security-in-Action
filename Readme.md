@@ -1,6 +1,8 @@
 # Summary of _API Sequrity in Action_
 
-**im a person who rogets, I need this summary in first place, that is why I made it, this should warm the memory and roll it with all needed details.**
+**im a person who forgets, I need this summary in first place, that is why I made it, this should warm the memory and roll it with all needed details.**
+
+this summary is for people who actually own and read the book, this is just a refresher
 
 _i wont be explaining basic staff_
 
@@ -869,3 +871,39 @@ const corsOptions = {
 ## the rest
 
 **the rest of this chapter disusses the implementation of the "statefull" tokens storage on the server and talks about the possibility of storing the tokens in the BOM instead of the Dom which reduse CSRF risk but actually increase the risk of XSS, Maybe an extra work would be a combination of these mechanisms (by having anti-CSRF token that actes on client-side level)**
+
+# **Chapter 6:-** _Self-contained tokens and JWTs_
+
+The idea behind stateless tokens is simple. Rather than store the token state in the
+database, you can instead encode that state directly into the token ID and send it to
+the client. For example, you could serialize the token fields into a JSON object, which
+you then Base64url-encode to create a string that you can use as the token ID. When
+the token is presented back to the API, you then simply decode the token and parse
+the JSON to recover the attributes of the session.
+
+![alt text](image-10.png)
+
+## JWT
+
+> The JWT standards zoo
+> While JWT itself is just one specification (https://tools.ietf.org/html/rfc7519), it
+> builds on a collection of standards collectively known as JSON Object Signing and
+> Encryption (JOSE). JOSE itself consists of several related standards:
+>  JSON Web Signing (JWS, https://tools.ietf.org/html/rfc7515) defines how
+> JSON objects can be authenticated with HMAC and digital signatures.
+>  JSON Web Encryption (JWE, https://tools.ietf.org/html/rfc7516) defines how
+> to encrypt JSON objects.
+>  JSON Web Key (JWK, https://tools.ietf.org/html/rfc7517) describes a standard format for cryptographic keys and related metadata in JSON.
+>  JSON Web Algorithms (JWA, https://tools.ietf.org/html/rfc7518) then specifies signing and encryption algorithms to be used.
+> JOSE has been extended over the years by new specifications to add new algorithms
+> and options. It is common to use JWT to refer to the whole collection of specifications, although there are uses of JOSE beyond JWTs.
+
+I will not talk about JWTs, Just visit it's site or reread the chapter
+
+in summary, JWT provides good specifications for self contained tokens, instead of creating a normal token with an ID and then statefully save it, just encrypt a JWT and put needed data inside it
+
+<br>
+
+that's it for chapter 6
+
+<br>
