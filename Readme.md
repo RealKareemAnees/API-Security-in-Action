@@ -4,9 +4,11 @@
 
 this summary is for people who actually own and read the book, this is just a refresher
 
-_i wont be explaining basic staff_
+follow me on [Linkedin](https://www.linkedin.com/in/kareem-anees-0496b62b3) for more like this
 
 lets digg in
+
+# Part 1: _Foundations_
 
 # **Chapter 1:-** _intro_
 
@@ -425,6 +427,8 @@ an ACL is identity based access controle list, it checks if the entity that want
 thats it for chapter 3
 
 <br>
+
+# Part 2: _Authentication_
 
 # **Chapter 4:-** _Session cookie authentication_
 
@@ -907,3 +911,5 @@ in summary, JWT provides good specifications for self contained tokens, instead 
 that's it for chapter 6
 
 <br>
+
+# Part 3: _Authorization_
