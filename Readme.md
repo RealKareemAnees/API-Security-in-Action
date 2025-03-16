@@ -913,3 +913,154 @@ that's it for chapter 6
 <br>
 
 # Part 3: _Authorization_
+
+# **Chapter 7:-** _OAuth2 and OpenID Connect_
+
+Chapter 7 starts by taking a look at delegated authorization with OAuth2. In
+this chapter, you’ll learn the difference between discretionary and mandatory
+access control and how to protect APIs with OAuth2 scopes.
+
+## Scoped Tokens
+
+insteaad of giving someuser or somexternal thirdparty the e-mail and password with good sake and love trust for doing only specific action, let's instead give them a token that only allow them to do only this action
+
+> A scoped token limits the operations that can be performed with
+> that token. The set of operations that are allowed is known as the scope of the
+> token. The scope of a token is specified by one or more scope labels, which
+> are often referred to collectively as scopes.
+
+### Scopes vs Permissions
+
+At first glance, it may seem that scopes and permissions are very similar, but there is a
+distinction in what they are used for, as shown in figure 7.2. Typically, an API is owned
+and operated by a central authority such as a company or an organization. Who can
+access the API and what they are allowed to do is controlled entirely by the central
+authority. This is an example of mandatory access control, because the users have no con-
+trol over their own permissions or those of other users. On the other hand, when a
+user delegates some of their access to a third-party app or service, that is known as dis-
+cretionary access control, because it’s up to the user how much of their access to grant to
+the third party. OAuth scopes are fundamentally about discretionary access control,
+while traditional permissions (which you implemented using ACLs in chapter 3) can
+be used for mandatory access control.
+
+![alt text](image-11.png)
+
+> With mandatory access control (MAC), user permissions are set and
+> enforced by a central authority and cannot be granted by users themselves.
+> With discretionary access control (DAC), users can delegate some of their permis-
+> sions to other users. OAuth2 allows discretionary access control, also known
+> as delegated authorization.
+
+> permissions for MAC are covered in chapter 8. OAuth scopes provide a way to layer
+> DAC on top of an existing MAC security layer.
+
+> The delegated authorization in OAuth is about users delegating their
+> authority to clients, such as mobile apps. The User Managed Access (UMA)
+> extension of OAuth2 allows users to delegate access to other users.
+
+## Introducing OAuth2
+
+> The tokens that an
+> application uses to access an API are known as access tokens in OAuth2
+
+![alt text](image-12.png)
+
+---
+
+**Some conventions for the rest of the chapter**
+
+- The authorization server (AS) authenticates the user and issues tokens to clients.
+
+- The user is known as the resource owner (RO), because it’s typically their resources (documents, photos, and so on) that the third-party app is trying to access. This term is not always accurate, but it has stuck now.
+
+- The third-party app or service is known as the client.
+
+- The API that hosts the user’s resources is known as the resource server (RS).
+
+- public clients are applications that run entirely within a user’s own device, such as a mobile app or JavaScript client running in a browser The client is completely under the user’s control.
+
+- Confidential clients run in a protected web server or other secure location that is not under a user’s direct control
+
+> A confidential client uses client credentials to authenticate to the
+> AS. Usually, this is a long random password known as a client secret, but more
+> secure forms of authentication can be used, including JWTs and TLS client
+
+### Authorization grants
+
+> Before a client can ask for an access token it must first register with the AS and obtain
+> a unique client ID
+
+- In the Authorization Code grant, the client first uses a web browser to navigate to a
+  dedicated authorization endpoint on the AS, indicating which scopes it requires.
+
+- The AS then authenticates the user directly in the browser and asks for consent
+  for the client access.
+
+- If the user agrees then the AS generates an authorization
+  code and gives it to the client to exchange for an access token at the token end-
+  point. The authorization code grant is covered in more detail in the next section.
+
+- The Client Credentials grant allows the client to obtain an access token using its
+  own credentials, with no user involved at all. This grant can be useful in some
+  microservice communications patterns discussed in chapter 11.
+
+- There are several additional grant types for more specific situations, such as the
+  device authorization grant (also known as device flow) for devices without any
+  direct means of user interaction.
+
+- There is no registry of defined grant types, but
+  websites such as https://oauth.net/2/grant-types/ list the most commonly used
+  types. The device authorization grant is covered in chapter 13.
+
+- OAuth2 grants
+  are extensible, so new grant types can be added when one of the existing grants
+  doesn’t fit.
+
+### How Oauth works
+
+t, the client first redirects the user’s web browser to the
+authorization endpoint at the AS, as shown in figure
+
+![alt text](image-13.png)
+
+![alt text](image-14.png)
+
+the client should genetate a unique key so the AS redirects with this key to avoid open redirect vulnerability
+
+> An open redirect vulnerability is when a server can be tricked into
+> redirecting a web browser to a URI under the attacker’s control. This can be
+> used for phishing because it initially looks like the user is going to a trusted
+> site, only to be redirected to the attacker. You should require all redirect URIs
+> to be pre-registered by trusted clients rather than redirecting to any URI pro-
+> vided in a request.
+
+## OpenID connect (OIDC)
+
+**OAuth can provide basic SSO functionality, but the primary focus is on delegated third-party access to APIs rather than user identity or session management. The OpenID Connect (OIDC) suite of standards (https://openid.net/developers/specs/) extend OAuth2 with several features**
+
+A standard way to retrieve identity information about a user, such as their name,
+email address, postal address, and telephone number. The client can access a
+UserInfo endpoint to retrieve identity claims as JSON using an OAuth2 access
+token with standard OIDC scopes.
+
+A way for the client to request that the user is authenticated even if they have an
+existing session, and to ask for them to be authenticated in a particular way,
+such as with two-factor authentication. While obtaining an OAuth2 access token
+may involve user authentication, it’s not guaranteed that the user was even pres-
+ent when the token was issued or how recently they logged in. OAuth2 is primar-
+ily a delegated access protocol, whereas OIDC provides a full authentication
+protocol. If the client needs to positively authenticate a user, then OIDC should
+be used.
+
+Extensions for session management and logout, allowing clients to be notified
+when a user logs out of their session at the AS, enabling the user to log out of all
+clients at once (known as single logout).
+
+> In OIDC, the AS and RS are combined into a single entity known
+> as an OpenID Provider (OP). The client is known as a Relying Party (RP).
+
+---
+
+**A nice video on [youtube](https://www.youtube.com/watch?v=996OiexHze0&t=110s) that explains the thing**
+
+---
