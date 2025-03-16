@@ -920,6 +920,8 @@ Chapter 7 starts by taking a look at delegated authorization with OAuth2. In
 this chapter, you’ll learn the difference between discretionary and mandatory
 access control and how to protect APIs with OAuth2 scopes.
 
+**Oauth is very good for confedentail clients and APIs, most public clients doesnt really need to use Oauth**
+
 ## Scoped Tokens
 
 insteaad of giving someuser or somexternal thirdparty the e-mail and password with good sake and love trust for doing only specific action, let's instead give them a token that only allow them to do only this action
@@ -1059,8 +1061,54 @@ clients at once (known as single logout).
 > In OIDC, the AS and RS are combined into a single entity known
 > as an OpenID Provider (OP). The client is known as a Relying Party (RP).
 
+## Summary of lecture pn Oauth2 by OKTA
+
 ---
 
-**A nice video on [youtube](https://www.youtube.com/watch?v=996OiexHze0&t=110s) that explains the thing**
+**A nice video on [youtube](https://www.youtube.com/watch?v=996OiexHze0&t=110s) that explains the thing**, a combination of resources is much better than singularity chains
+
+---
+
+**Oauth 2.0 termonologies**
+
+- **_Resource owner_ (RO)** is the user itself that owns the resource
+
+- **_Client_** is the entity that ant to access the resource
+
+- **_Authorization Server_ (AS)** is the server that takes auth requests, generates, auth codes and tokens
+
+- **_Resource Server_ (RS)** this is the server that trust the token that is issued by the AS
+
+- **Access Token** the token mentioned above
+
+- **Redirect URL** redirect URL :)
+
+- **Authorization grant** a prove that the user has consented to give a permission (more of an implementation thing)
+
+---
+
+a nice snippet from that video
+
+![alt text](image-15.png)
+
+another way is like
+![alt text](image-16.png)
+
+in the first image; a more secure approach that that relies on the backend more
+
+> Oauth is maded ofr delegated authorization and resources accessing, not for mandatory authorization and not for authentication
+
+### openid connect
+
+a framework above Oauth for authentication
+
+![alt text](image-18.png)
+![alt text](image-19.png)
+
+most common example is next-auth with google provider
+
+---
+
+thats it for chapter 7
 
 ---
