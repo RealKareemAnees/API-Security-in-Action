@@ -1118,3 +1118,57 @@ most common example is next-auth with google provider
 thats it for chapter 7
 
 ---
+
+# **Chapter 8:-** _Identity based access control_
+
+**in Identity based access control** we give users permission based on who they are
+
+## Users and groups
+
+users can belong to groups, groups can belong to othe groups
+
+a group carries a set of permissions
+
+**therfor it is called subject**
+
+![alt text](image-22.png)
+
+## Role based access controll
+
+we give users roles, roles carry permission
+
+like AWS polices, they have permission, and I can attach polices to subjects (users or group of users)
+
+![alt text](image-23.png)
+
+## Attribute based access control
+
+**example problem that ABAC solves:** Consider the call center agent example from section 8.2.4. As well as
+preventing the agent from accessing customer records outside of their contracted
+working hours, you might also want to prevent them accessing those records if they
+are not actually on a call with that customer. Allowing each agent to access all cus-
+tomer records during their working hours is still more authority than they really need
+to get their job done, violating the principle of least privilege. It may be that you can
+determine which customer the call agent is talking to from their phone number
+(caller ID), or perhaps the customer enters an account number using the keypad
+before they are connected to an agent. You’d like to only allow the agent access to just
+that customer’s file for the duration of the call, perhaps allowing five minutes after-
+ward for them to finishing writing any notes.
+
+![alt text](image-24.png)
+
+whenever a client tries to do anything it must give attributes of the action
+
+**these attributes can be**
+
+- _Attributes about the subject_ the subject that is making the request
+
+- _Attributes about the resource_ the resource that is owned by the resource owner
+
+- _Attributes about the action_ what action are we performing
+
+the client must provide these atrributes, then the Server authorize the request based on these attributes
+
+# **Chapter 9:-** _cabability based acccess control_
+
+me personally don't get it
