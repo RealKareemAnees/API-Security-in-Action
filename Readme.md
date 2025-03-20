@@ -1098,6 +1098,12 @@ in the first image; a more secure approach that that relies on the backend more
 
 > Oauth is maded ofr delegated authorization and resources accessing, not for mandatory authorization and not for authentication
 
+**another approach**
+
+![alt text](image-20.png)
+
+![alt text](image-21.png)
+
 ### openid connect
 
 a framework above Oauth for authentication
