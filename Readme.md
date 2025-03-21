@@ -1,12 +1,12 @@
-# Summary of _API Sequrity in Action_
+# Summary of _API Security in Action_
 
-**im a person who forgets, I need this summary in first place, that is why I made it, this should warm the memory and roll it with all needed details.**
+**I'm a person who forgets, I need this summary in the first place, that is why I made it, this should warm the memory and roll it with all needed details.**
 
 this summary is for people who actually own and read the book, this is just a refresher
 
 follow me on [Linkedin](https://www.linkedin.com/in/kareem-anees-0496b62b3) for more like this
 
-lets digg in
+let's dig in
 
 # Part 1: _Foundations_
 
@@ -14,7 +14,7 @@ lets digg in
 
 lots of talk
 
-anyways, I suggest imlementing the [owasp top 10](https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html) on every API
+anyways, I suggest implementing the [owasp top 10](https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html) on every API
 
 also watching this lecture about HTTP cookie by Hussein Nasser on [youtube](https://www.youtube.com/watch?v=sovAIX4doOE&pp=ygUjZG91YmxlIHN1Ym1pdCBjb29raWUgY3NyZiBleHBsYWluZWQ%3D)
 
@@ -22,27 +22,27 @@ also reading about HTTP [from MDN web docs](https://developer.mozilla.org/en-US/
 
 also rereading this Readme progressively
 
-also implemeinting this security model
+also implementing this security model
 
 ![alt text](image-3.png)
 
 # **Chapter 2:-** _Secure API Development_
 
-this chapter introduces most basic and common non-identity attacks, things like XXS, Injections, etecetra...
+this chapter introduces most basic and common non-identity attacks, things like XSS, Injections, etcetera...
 
-althoug this chapter could be summarized in [owasp top 10](https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html)
+although this chapter could be summarized in [owasp top 10](https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html)
 
 <br>
 
 ## SQL Injection
 
-SQL is queries are strings, user inputs are strings, users can inject commands to our api
+SQL is queries are strings, user inputs are strings, users can inject commands to our API
 
 ### preventing _SQL Injection_
 
 #### 1. Use Parameterized Queries (Prepared Statements)
 
-this is using a library or orm that quantize commands instead of passing plain strings
+this is using a library or ORM that parameterizes commands instead of passing plain strings
 
 like
 
@@ -102,17 +102,17 @@ app.post(
 
 #### 4. Use Least Privilege Database Accounts
 
-simply; an api that needs to fetch user names, doesnt need to have the previlage to drop a table for example.
+simply; an API that needs to fetch user names, doesn't need to have the privilege to drop a table for example.
 
-the DB admin is responsible for providing the right previlages to the right services
+the DB admin is responsible for providing the right privileges to the right services
 
-also each service must be interesten in only one thing, a fetching service mustn't do entire CRUD
+also each service must be interested in only one thing, a fetching service mustn't do entire CRUD
 
 <br>
 
 ## Input Validation
 
-this is very important practice, it does not only prevent some attacks like DDOS or XXS, It also detects if a user is trying to hack our system. or if there is misSynchrounsation between the client code and server code that the client is giving wrong requests, etcetra.
+this is very important practice, it does not only prevent some attacks like DDOS or XSS, It also detects if a user is trying to hack our system. or if there is mis-synchronization between the client code and server code that the client is giving wrong requests, etcetera.
 
 ### how to do input validation
 
@@ -169,9 +169,9 @@ etc...
 
 ### Evil Regex
 
-> these next sections arent frmo the book
+> these next sections aren't from the book
 
-there are some regex bad practices that open the door for DOOS attacks
+there are some regex bad practices that open the door for DoS attacks
 
 **Evil regexes typically have:**
 
@@ -203,44 +203,6 @@ const safeRegex = /^(?>a+)+$/;
 ```sh
 npm install re2
 ```
-
-```ts
-import RE2 from "re2";
-
-const safeRegex = new RE2(/^(a+)+$/);
-const testString = "aaaaaaaaaaaaaaaaaaaaaaaaa!";
-console.log(safeRegex.test(testString)); // Runs safely without CPU spike
-```
-
-#### Avoid Nested Quantifiers ((X+)+)
-
-dont do
-
-```ts
-const regex = /^(a+)+$/;
-```
-
-instead do
-
-```ts
-const safeRegex = /^a+$/;
-```
-
-#### use limit quantifiers
-
-dont do
-
-```ts
-const regex = /^.*(evil).*/;
-```
-
-instead do
-
-```ts
-const safeRegex = /^[a-zA-Z0-9 ]{1,100}(evil)[a-zA-Z0-9 ]{1,100}$/;
-```
-
-#### Use Timeouts for Regex Execution
 
 ```ts
 import RE2 from "re2";
@@ -668,7 +630,7 @@ here is the book definetion for _Persistent cookies VS Session cookies_:
 > also consider implementing a maximum idle time, so that the cookie becomes invalid
 > if it has not been used for three minutes or so. Many session cookie frameworks
 > implement these checks for you.
-> Persistent cookies can be useful during the login process as a “Remember Me”
+> Persistent cookies can be useful during the login process as a "Remember Me"
 > option to avoid the user having to type in their username manually, or even to automatically log the user in for low-risk operations. This should only be done if trust in
 > the device and the user can be established by other means, such as looking at the
 > location, time of day, and other attributes that are typical for that user. If anything
@@ -676,7 +638,7 @@ here is the book definetion for _Persistent cookies VS Session cookies_:
 
 ## CSRF
 
-**Cross-site request forgery (CSRF, pronounced “sea-surf”) occurs
+**Cross-site request forgery (CSRF, pronounced "sea-surf") occurs
 when an attacker makes a cross-origin request to your API and the browser
 sends cookies along with the request. The request is processed as if it was genuine unless extra checks are made to prevent these requests.**
 
@@ -692,11 +654,7 @@ sends cookies along with the request. The request is processed as if it was genu
 #### using **SameSite**
 
 A SameSite cookie will only be sent on requests that originate
-from the same domain that originally set the cookie. Only the registerable
-domain is examined, so api.payments.example.com and www .example.com
-are considered the same site, as they both have the registerable domain of
-example.com. On the other hand, www .example.org (different suffix) and
-www .different.com are considered different sites. Unlike an origin, the protocol and port are not considered when making same-site decisions.
+from the same domain that originally set the cookie.
 
 ![alt text](image-4.png)
 
@@ -731,7 +689,7 @@ thats it for this chapter
 
 this chapter talks abour CORS and some cool browser's features
 
-Here’s the explanation in Markdown format:
+Here's the explanation in Markdown format:
 
 ## Preflight Request in CORS
 
@@ -743,7 +701,7 @@ A preflight request occurs when:
 
 - The request uses HTTP methods other than **GET**, **HEAD**, or **POST**.
 - The request includes custom headers (e.g., `Authorization`, `X-Requested-With`).
-- The request’s `Content-Type` is something other than:
+- The request's `Content-Type` is something other than:
   - `application/x-www-form-urlencoded`
   - `multipart/form-data`
   - `text/plain`
@@ -868,7 +826,7 @@ const corsOptions = {
 > adding the SameSite=none and Secure attributes to those cookies, but this can
 > cause problems in some web browsers (see https://www.chromium.org/updates/
 > same-site/incompatible-clients). Google, Apple, and Mozilla are all becoming more
-> aggressive in blocking cross-site cookies to prevent tracking and other security or privacy issues. It’s clear that the future of cookies will be restricted to HTTP requests
+> aggressive in blocking cross-site cookies to prevent tracking and other security or privacy issues. It's clear that the future of cookies will be restricted to HTTP requests
 > within the same site and that alternative approaches, such as those discussed in the
 > rest of this chapter, must be used for all other cases.
 
@@ -917,14 +875,14 @@ that's it for chapter 6
 # **Chapter 7:-** _OAuth2 and OpenID Connect_
 
 Chapter 7 starts by taking a look at delegated authorization with OAuth2. In
-this chapter, you’ll learn the difference between discretionary and mandatory
+this chapter, you'll learn the difference between discretionary and mandatory
 access control and how to protect APIs with OAuth2 scopes.
 
-**Oauth is very good for confedentail clients and APIs, most public clients doesnt really need to use Oauth**
+**OAuth is very good for confidential clients and APIs, most public clients doesn't really need to use OAuth**
 
 ## Scoped Tokens
 
-insteaad of giving someuser or somexternal thirdparty the e-mail and password with good sake and love trust for doing only specific action, let's instead give them a token that only allow them to do only this action
+insteaad of giving some user or some external third party the e-mail and password with good sake and love trust for doing only specific action, let's instead give them a token that only allow them to do only this action
 
 > A scoped token limits the operations that can be performed with
 > that token. The set of operations that are allowed is known as the scope of the
@@ -940,7 +898,7 @@ access the API and what they are allowed to do is controlled entirely by the cen
 authority. This is an example of mandatory access control, because the users have no con-
 trol over their own permissions or those of other users. On the other hand, when a
 user delegates some of their access to a third-party app or service, that is known as dis-
-cretionary access control, because it’s up to the user how much of their access to grant to
+cretionary access control, because it's up to the user how much of their access to grant to
 the third party. OAuth scopes are fundamentally about discretionary access control,
 while traditional permissions (which you implemented using ACLs in chapter 3) can
 be used for mandatory access control.
@@ -973,15 +931,15 @@ be used for mandatory access control.
 
 - The authorization server (AS) authenticates the user and issues tokens to clients.
 
-- The user is known as the resource owner (RO), because it’s typically their resources (documents, photos, and so on) that the third-party app is trying to access. This term is not always accurate, but it has stuck now.
+- The user is known as the resource owner (RO), because it's typically their resources (documents, photos, and so on) that the third-party app is trying to access. This term is not always accurate, but it has stuck now.
 
 - The third-party app or service is known as the client.
 
-- The API that hosts the user’s resources is known as the resource server (RS).
+- The API that hosts the user's resources is known as the resource server (RS).
 
-- public clients are applications that run entirely within a user’s own device, such as a mobile app or JavaScript client running in a browser The client is completely under the user’s control.
+- public clients are applications that run entirely within a user's own device, such as a mobile app or JavaScript client running in a browser The client is completely under the user's control.
 
-- Confidential clients run in a protected web server or other secure location that is not under a user’s direct control
+- Confidential clients run in a protected web server or other secure location that is not under a user's direct control
 
 > A confidential client uses client credentials to authenticate to the
 > AS. Usually, this is a long random password known as a client secret, but more
@@ -1016,11 +974,11 @@ be used for mandatory access control.
 
 - OAuth2 grants
   are extensible, so new grant types can be added when one of the existing grants
-  doesn’t fit.
+  doesn't fit.
 
 ### How Oauth works
 
-t, the client first redirects the user’s web browser to the
+t, the client first redirects the user's web browser to the
 authorization endpoint at the AS, as shown in figure
 
 ![alt text](image-13.png)
@@ -1030,7 +988,7 @@ authorization endpoint at the AS, as shown in figure
 the client should genetate a unique key so the AS redirects with this key to avoid open redirect vulnerability
 
 > An open redirect vulnerability is when a server can be tricked into
-> redirecting a web browser to a URI under the attacker’s control. This can be
+> redirecting a web browser to a URI under the attacker's control. This can be
 > used for phishing because it initially looks like the user is going to a trusted
 > site, only to be redirected to the attacker. You should require all redirect URIs
 > to be pre-registered by trusted clients rather than redirecting to any URI pro-
@@ -1048,7 +1006,7 @@ token with standard OIDC scopes.
 A way for the client to request that the user is authenticated even if they have an
 existing session, and to ask for them to be authenticated in a particular way,
 such as with two-factor authentication. While obtaining an OAuth2 access token
-may involve user authentication, it’s not guaranteed that the user was even pres-
+may involve user authentication, it's not guaranteed that the user was even pres-
 ent when the token was issued or how recently they logged in. OAuth2 is primar-
 ily a delegated access protocol, whereas OIDC provides a full authentication
 protocol. If the client needs to positively authenticate a user, then OIDC should
@@ -1096,7 +1054,7 @@ another way is like
 
 in the first image; a more secure approach that that relies on the backend more
 
-> Oauth is maded ofr delegated authorization and resources accessing, not for mandatory authorization and not for authentication
+> OAuth is made for delegated authorization and resources accessing, not for mandatory authorization and not for authentication
 
 **another approach**
 
@@ -1125,7 +1083,7 @@ thats it for chapter 7
 
 ## Users and groups
 
-users can belong to groups, groups can belong to othe groups
+users can belong to groups, groups can belong to other groups
 
 a group carries a set of permissions
 
@@ -1133,11 +1091,11 @@ a group carries a set of permissions
 
 ![alt text](image-22.png)
 
-## Role based access controll
+## Role based access control
 
 we give users roles, roles carry permission
 
-like AWS polices, they have permission, and I can attach polices to subjects (users or group of users)
+like AWS policies, they have permission, and I can attach policies to subjects (users or group of users)
 
 ![alt text](image-23.png)
 
@@ -1151,8 +1109,8 @@ tomer records during their working hours is still more authority than they reall
 to get their job done, violating the principle of least privilege. It may be that you can
 determine which customer the call agent is talking to from their phone number
 (caller ID), or perhaps the customer enters an account number using the keypad
-before they are connected to an agent. You’d like to only allow the agent access to just
-that customer’s file for the duration of the call, perhaps allowing five minutes after-
+before they are connected to an agent. You'd like to only allow the agent access to just
+that customer's file for the duration of the call, perhaps allowing five minutes after-
 ward for them to finishing writing any notes.
 
 ![alt text](image-24.png)
@@ -1167,11 +1125,11 @@ whenever a client tries to do anything it must give attributes of the action
 
 - _Attributes about the action_ what action are we performing
 
-the client must provide these atrributes, then the Server authorize the request based on these attributes
+the client must provide these attributes, then the Server authorize the request based on these attributes
 
-# **Chapter 9:-** _cabability based acccess control_
+# **Chapter 9:-** _capability based access control_
 
-what I have been doing in chapter 7 is giving users a token, only my server can decrypt and read the token. what cabability based control is; it to give authorize token instead of users, this allow sharing resources with many users regardles of what roles or groups they belong to, or even to third parties
+what I have been doing in chapter 7 is giving users a token, only my server can decrypt and read the token. what capability based control is; it to give authorize token instead of users, this allow sharing resources with many users regardless of what roles or groups they belong to, or even to third parties
 
 ---
 
