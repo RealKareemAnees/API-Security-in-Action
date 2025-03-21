@@ -1171,4 +1171,38 @@ the client must provide these atrributes, then the Server authorize the request 
 
 # **Chapter 9:-** _cabability based acccess control_
 
-me personally don't get it
+what I have been doing in chapter 7 is giving users a token, only my server can decrypt and read the token. what cabability based control is; it to give authorize token instead of users, this allow sharing resources with many users regardles of what roles or groups they belong to, or even to third parties
+
+---
+
+<br>
+
+---
+
+<br>
+
+---
+
+<br>
+
+---
+
+<br>
+
+---
+
+<br>
+
+---
+
+<br>
+
+---
+
+<br>
+
+# THE END
+
+i wont pu the rest of this book because it talks about microservices and imbedded that i will explain independently
+
+If you like this, see give my [Linkedin Profile](https://www.linkedin.com/in/kareem-anees-0496b62b3) a visit
